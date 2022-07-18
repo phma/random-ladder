@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Cryptography.RandomLadder
 
 main :: IO ()
 main = someFunc

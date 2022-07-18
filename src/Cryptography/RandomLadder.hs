@@ -1,4 +1,4 @@
-module Lib
+module Cryptography.RandomLadder
     ( someFunc
     , bitize
     , randomLadder

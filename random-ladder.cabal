@@ -25,7 +25,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Cryptography.RandomLadder
   other-modules:
       Paths_random_ladder
   hs-source-dirs:
