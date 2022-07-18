@@ -35,3 +35,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - random-ladder
+    - tasty
+    - tasty-hunit
+    - tasty-quickcheck
