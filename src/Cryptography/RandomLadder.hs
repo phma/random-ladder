@@ -11,10 +11,19 @@ so that the same number can result in different sequences of operations and
 the same sequence of operations can result from different numbers.
 -}
 module Cryptography.RandomLadder
-    ( randomLadder
+    ( ladderBitsNeeded
+    , randomLadder
     ) where
 import qualified Data.Sequence as Seq
 import Data.Sequence ((><), (<|), (|>), Seq((:<|)), Seq((:|>)))
+
+ladderBitsNeeded :: Int -- ^ The number of bits in the exponent/multiplier.
+  -> Int -- ^ The number of bits in range for randomLadder.
+ladderBitsNeeded n = round ((fromIntegral n) * 0.78788506 + 9.331)
+-- 0.78788506 is (log (644/373))/(log 2),
+-- which is pretty close to (log (644/271))/(log 3).
+-- 9.331 is (log 644)/(log 2),
+-- which allows the last bit to be split close to 373|271.
 
 makeLadder :: Integer -> Integer -> Integer -> Seq.Seq Int
 -- makeLadder n random range -> sequence-of-instructions
@@ -61,7 +70,7 @@ climbLadder (is :|> 32) gen gen2 (<+>) acc =
 -- The number 8388608 determines the sequence of squaring and cubing, but
 -- the final result, which is 3^17, does not depend on it.
 randomLadder :: a -- ^ The generator of the group, the point being multiplied or the base of exponentiation.
-  -> (a -> a -> a) -- ^ The group operation
+  -> (a -> a -> a) -- ^ The group operation.
   -> a -- ^ The identity element.
   -> Integer -- ^ The exponent or multiplier (must be nonnegative).
   -> Integer -- ^ A random number in [0..range).
