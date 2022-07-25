@@ -44,9 +44,9 @@ makeLadder n random range =
       if rem3 == 0
       then 30 <| third
       else
-	if rem3 == 1
-	then 31 <| third
-	else 32 <| third
+        if rem3 == 1
+        then 31 <| third
+        else 32 <| third
     else let half = makeLadder quo2 random crit
     in
       if rem2 == 0
