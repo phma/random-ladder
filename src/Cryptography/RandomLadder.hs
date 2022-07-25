@@ -2,6 +2,7 @@ module Cryptography.RandomLadder
     ( someFunc
     , bitize
     , makeLadder
+    , climbLadder
     , randomLadder
     ) where
 import qualified Data.Sequence as Seq
@@ -46,6 +47,19 @@ makeLadder n random range =
       if rem2 == 0
       then 20 <| half
       else 21 <| half
+
+climbLadder :: Seq.Seq Int -> a -> a -> (a -> a -> a) -> a -> a
+climbLadder Seq.Empty _ _ _ acc = acc
+climbLadder (is :|> 20) gen gen2 (<+>) acc =
+  climbLadder is gen gen2 (<+>) (acc <+> acc)
+climbLadder (is :|> 21) gen gen2 (<+>) acc =
+  climbLadder is gen gen2 (<+>) ((acc <+> acc) <+> gen)
+climbLadder (is :|> 30) gen gen2 (<+>) acc =
+  climbLadder is gen gen2 (<+>) (acc <+> acc <+> acc)
+climbLadder (is :|> 31) gen gen2 (<+>) acc =
+  climbLadder is gen gen2 (<+>) ((acc <+> acc <+> acc) <+> gen)
+climbLadder (is :|> 32) gen gen2 (<+>) acc =
+  climbLadder is gen gen2 (<+>) ((acc <+> acc <+> acc) <+> gen2)
 
 randomLadder :: a -> (a -> a -> a) -> a -> Integer -> Integer -> Integer -> a
 -- randomLadder gen (<+>) zero n random range -> n*gen
