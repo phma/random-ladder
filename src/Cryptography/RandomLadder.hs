@@ -11,24 +11,10 @@ so that the same number can result in different sequences of operations and
 the same sequence of operations can result from different numbers.
 -}
 module Cryptography.RandomLadder
-    ( someFunc
-    , bitize
-    , randomLadder
+    ( randomLadder
     ) where
 import qualified Data.Sequence as Seq
 import Data.Sequence ((><), (<|), (|>), Seq((:<|)), Seq((:|>)))
-
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
-
-bitize :: Integer -> Integer -> String
-bitize _ 0 = ""
-bitize random 1 = if random > 0 then "3" else "2"
-bitize random range =
-  let crit = (range * 373 + 322) `div` 644
-  in if random >= crit
-	then '3' : bitize (random - crit) (range - crit)
-	else '2' : bitize random crit
 
 makeLadder :: Integer -> Integer -> Integer -> Seq.Seq Int
 -- makeLadder n random range -> sequence-of-instructions
