@@ -1,3 +1,15 @@
+{-
+| Copyright 2022 Pierre Abbat
+* RandomLadder
+This module performs a public-key encryption operation, such as modulo
+exponentiation or elliptic curve scalar multiplication, in a way that makes it
+difficult for an attacker to determine the exponent or multiplier by listening
+to a side channel. Rather than performing the operation in a constant time
+regardless of the bits, as is done in imperative languages such as C and Rust,
+it randomizes the sequence of operations, dividing the number by 2 or 3 at random,
+so that the same number can result in different sequences of operations and
+the same sequence of operations can result from different numbers.
+-}
 module Cryptography.RandomLadder
     ( someFunc
     , bitize
@@ -59,10 +71,15 @@ climbLadder (is :|> 31) gen gen2 (<+>) acc =
 climbLadder (is :|> 32) gen gen2 (<+>) acc =
   climbLadder is gen gen2 (<+>) ((acc <+> acc <+> acc) <+> gen2)
 
-randomLadder :: a -> (a -> a -> a) -> a -> Integer -> Integer -> Integer -> a
--- randomLadder gen (<+>) zero n random range -> n*gen
--- range should be at least n**0.78788506
--- random should be in [0..range)
--- n should be nonnegative
+-- | For example, (randomLadder 3 (*) 1 17 8388608 16777216) = 129140163.
+-- The number 8388608 determines the sequence of squaring and cubing, but
+-- the final result, which is 3^17, does not depend on it.
+randomLadder :: a -- ^ The generator of the group, the point being multiplied or the base of exponentiation.
+  -> (a -> a -> a) -- ^ The group operation
+  -> a -- ^ The identity element.
+  -> Integer -- ^ The exponent or multiplier (must be nonnegative).
+  -> Integer -- ^ A random number in [0..range).
+  -> Integer -- ^ The range of the random number.
+  -> a -- ^ The result of exponentiation or scalar multiplication.
 randomLadder gen (<+>) zero n random range =
   climbLadder (makeLadder n random range) gen (gen <+> gen) (<+>) zero
