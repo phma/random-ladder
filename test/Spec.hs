@@ -12,8 +12,15 @@ tests = testGroup "Tests" [properties, unitTests]
 properties :: TestTree
 properties = testGroup "Properties" [qcProps]
 
+newtype BigRand = BigRand Integer deriving Show
+
+instance Arbitrary BigRand where
+  arbitrary :: Gen BigRand
+  arbitrary = BigRand <$> choose (0, 2^128-1)
+
 qcProps = testGroup "(checked by QuickCheck)"
-  [
+  [ QC.testProperty "bignum" $
+      \(BigRand a) (BigRand b) -> randomLadder 1 (+) 0 a b (2^128) == a
   ]
 
 unitTests = testGroup "Unit tests"
