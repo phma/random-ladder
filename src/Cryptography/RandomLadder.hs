@@ -1,6 +1,8 @@
-{-
-| Copyright 2022 Pierre Abbat
+{- |
+Copyright 2022 Pierre Abbat
+
 * RandomLadder
+
 This module performs a public-key encryption operation, such as modulo
 exponentiation or elliptic curve scalar multiplication, in a way that makes it
 difficult for an attacker to determine the exponent or multiplier by listening
