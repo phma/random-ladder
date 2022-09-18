@@ -6,7 +6,9 @@ cabal-version: 1.12
 
 name:           random-ladder
 version:        0.1.0.0
+synopsis:       random ladder for defeating side-channel attacks
 description:    Please see the README on GitHub at <https://github.com/phma/random-ladder#readme>
+category:       Cryptography
 homepage:       https://github.com/phma/random-ladder#readme
 bug-reports:    https://github.com/phma/random-ladder/issues
 author:         Pierre Abbat
