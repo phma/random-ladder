@@ -40,3 +40,8 @@ tests:
     - tasty
     - tasty-hunit
     - tasty-quickcheck
+
+benchmarks:
+  time-oper-bench:
+    main:                TimeOper.hs
+    source-dirs:         bench
