@@ -18,6 +18,7 @@ module Cryptography.RandomLadder
     ) where
 import qualified Data.Sequence as Seq
 import Data.Sequence ((><), (<|), (|>), Seq((:<|)), Seq((:|>)))
+import Control.Parallel
 
 ladderBitsNeeded :: Int -- ^ The number of bits in the exponent/multiplier.
   -> Int -- ^ The number of bits in range for randomLadder.
@@ -40,7 +41,9 @@ makeLadder n random range =
   let crit = (range * 373 + 322) `div` 644
       (quo2,rem2) = n `divMod` 2
       (quo3,rem3) = n `divMod` 3
-  in if random >= crit
+  in seq (par (n `divMod` 2) (n `divMod` 3))
+  -- Compute both n/2 and n/3 before using one of them, to avoid revealing the bit.
+  ( if random >= crit
     then let third = makeLadder quo3 (random - crit) (range - crit)
     in
       if rem3 == 0
@@ -53,7 +56,7 @@ makeLadder n random range =
     in
       if rem2 == 0
       then 20 <| half
-      else 21 <| half
+      else 21 <| half )
 
 climbLadder :: Seq.Seq Int -> a -> a -> (a -> a -> a) -> a -> a
 climbLadder Seq.Empty _ _ _ acc = acc
