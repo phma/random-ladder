@@ -41,7 +41,7 @@ makeLadder n blind range =
   let crit = (range * 373 + 322) `div` 644
       (quo2,rem2) = n `divMod` 2
       (quo3,rem3) = n `divMod` 3
-  in seq (par (n `divMod` 2) (n `divMod` 3)) $
+  in pseq (seq (n `divMod` 2) (n `divMod` 3)) $
   -- Compute both n/2 and n/3 before using one of them, to avoid revealing the bit.
   if blind >= crit
     then let third = makeLadder quo3 (blind - crit) (range - crit)
