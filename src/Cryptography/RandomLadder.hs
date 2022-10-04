@@ -29,22 +29,22 @@ ladderBitsNeeded n = round ((fromIntegral n) * 0.78788506 + 9.331)
 -- which allows the last bit to be split close to 373|271.
 
 makeLadder :: Integer -> Integer -> Integer -> Seq.Seq Int
--- makeLadder n random range -> sequence-of-instructions
+-- makeLadder n blind range -> sequence-of-instructions
 -- range should be at least n**0.78788506
--- random should be in [0..range)
+-- blind should be in [0..range)
 -- n should be nonnegative
 makeLadder (-1) _ _ = error "negative multiplier/exponent"
 makeLadder 0 _ _ = Seq.empty
 makeLadder 1 _ _ = Seq.singleton 21
 makeLadder 2 _ _ = Seq.singleton 32
-makeLadder n random range =
+makeLadder n blind range =
   let crit = (range * 373 + 322) `div` 644
       (quo2,rem2) = n `divMod` 2
       (quo3,rem3) = n `divMod` 3
   in seq (par (n `divMod` 2) (n `divMod` 3)) $
   -- Compute both n/2 and n/3 before using one of them, to avoid revealing the bit.
-  if random >= crit
-    then let third = makeLadder quo3 (random - crit) (range - crit)
+  if blind >= crit
+    then let third = makeLadder quo3 (blind - crit) (range - crit)
     in
       if rem3 == 0
       then 30 <| third
@@ -52,7 +52,7 @@ makeLadder n random range =
         if rem3 == 1
         then 31 <| third
         else 32 <| third
-    else let half = makeLadder quo2 random crit
+    else let half = makeLadder quo2 blind crit
     in
       if rem2 == 0
       then 20 <| half
@@ -78,8 +78,8 @@ randomLadder :: a -- ^ The generator of the group, the point being multiplied or
   -> (a -> a -> a) -- ^ The group operation.
   -> a -- ^ The identity element.
   -> Integer -- ^ The exponent or multiplier (must be nonnegative).
-  -> Integer -- ^ A random number in [0..range).
-  -> Integer -- ^ The range of the random number.
+  -> Integer -- ^ A blinding parameter, a random number in [0..range).
+  -> Integer -- ^ The range of the blinding parameter.
   -> a -- ^ The result of exponentiation or scalar multiplication.
-randomLadder gen (<+>) zero n random range =
-  climbLadder (makeLadder n random range) gen (gen <+> gen) (<+>) zero
+randomLadder gen (<+>) zero n blind range =
+  climbLadder (makeLadder n blind range) gen (gen <+> gen) (<+>) zero
