@@ -58,18 +58,18 @@ makeLadder n blind range =
       then 20 <| half
       else 21 <| half
 
-climbLadder :: Seq.Seq Int -> a -> a -> (a -> a -> a) -> a -> a
-climbLadder Seq.Empty _ _ _ acc = acc
-climbLadder (is :|> 20) gen gen2 (<+>) acc =
-  climbLadder is gen gen2 (<+>) (acc <+> acc)
-climbLadder (is :|> 21) gen gen2 (<+>) acc =
-  climbLadder is gen gen2 (<+>) ((acc <+> acc) <+> gen)
-climbLadder (is :|> 30) gen gen2 (<+>) acc =
-  climbLadder is gen gen2 (<+>) (acc <+> acc <+> acc)
-climbLadder (is :|> 31) gen gen2 (<+>) acc =
-  climbLadder is gen gen2 (<+>) ((acc <+> acc <+> acc) <+> gen)
-climbLadder (is :|> 32) gen gen2 (<+>) acc =
-  climbLadder is gen gen2 (<+>) ((acc <+> acc <+> acc) <+> gen2)
+climbLadder :: Seq.Seq Int -> a -> a -> (a -> a -> a) -> (a -> a) -> a -> a
+climbLadder Seq.Empty _ _ _ _ acc = acc
+climbLadder (is :|> 20) gen gen2 (<+>) dbl acc =
+  climbLadder is gen gen2 (<+>) dbl (dbl acc)
+climbLadder (is :|> 21) gen gen2 (<+>) dbl acc =
+  climbLadder is gen gen2 (<+>) dbl ((dbl acc) <+> gen)
+climbLadder (is :|> 30) gen gen2 (<+>) dbl acc =
+  climbLadder is gen gen2 (<+>) dbl ((dbl acc) <+> acc)
+climbLadder (is :|> 31) gen gen2 (<+>) dbl acc =
+  climbLadder is gen gen2 (<+>) dbl (((dbl acc) <+> acc) <+> gen)
+climbLadder (is :|> 32) gen gen2 (<+>) dbl acc =
+  climbLadder is gen gen2 (<+>) dbl (((dbl acc) <+> acc) <+> gen2)
 
 -- | For example, (randomLadder 3 (*) 1 17 8388608 16777216) = 129140163.
 -- The number 8388608 determines the sequence of squaring and cubing, but
@@ -82,4 +82,5 @@ randomLadder :: a -- ^ The generator of the group, the point being multiplied or
   -> Integer -- ^ The range of the blinding parameter.
   -> a -- ^ The result of exponentiation or scalar multiplication.
 randomLadder gen (<+>) zero n blind range =
-  climbLadder (makeLadder n blind range) gen (gen <+> gen) (<+>) zero
+  climbLadder (makeLadder n blind range) gen (gen <+> gen) (<+>) dbl zero
+  where dbl = \x -> x <+> x
