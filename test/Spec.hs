@@ -20,10 +20,12 @@ instance Arbitrary BigRand where
 
 qcProps = testGroup "(checked by QuickCheck)"
   [ QC.testProperty "bignum" $
-      \(BigRand a) (BigRand b) -> randomLadder 1 (+) 0 a b (2^128) == a
+      \(BigRand a) (BigRand b) -> randomLadder 1 (+) (*2) 0 a b (2^128) == a
+  , QC.testProperty "bignum'" $
+      \(BigRand a) (BigRand b) -> randomLadder' 1 (+) 0 a b (2^128) == a
   ]
 
 unitTests = testGroup "Unit tests"
   [ testCase "5882353" $
-      (randomLadder 1 (+) 0 5882353 8388608 16777216) @?= 5882353
+      (randomLadder' 1 (+) 0 5882353 8388608 16777216) @?= 5882353
   ]

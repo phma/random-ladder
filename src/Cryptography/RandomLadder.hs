@@ -14,6 +14,7 @@ the same sequence of operations can result from different numbers.
 -}
 module Cryptography.RandomLadder
     ( ladderBitsNeeded
+    , randomLadder'
     , randomLadder
     ) where
 import qualified Data.Sequence as Seq
@@ -71,16 +72,30 @@ climbLadder (is :|> 31) gen gen2 (<+>) dbl acc =
 climbLadder (is :|> 32) gen gen2 (<+>) dbl acc =
   climbLadder is gen gen2 (<+>) dbl (((dbl acc) <+> acc) <+> gen2)
 
--- | For example, (randomLadder 3 (*) 1 17 8388608 16777216) = 129140163.
+-- | For example, (randomLadder' 3 (*) 1 17 8388608 16777216) = 129140163.
 -- The number 8388608 determines the sequence of squaring and cubing, but
 -- the final result, which is 3^17, does not depend on it.
-randomLadder :: a -- ^ The generator of the group, the point being multiplied or the base of exponentiation.
+randomLadder' :: a -- ^ The generator of the group, the point being multiplied or the base of exponentiation.
   -> (a -> a -> a) -- ^ The group operation.
   -> a -- ^ The identity element.
   -> Integer -- ^ The exponent or multiplier (must be nonnegative).
   -> Integer -- ^ A blinding parameter, a random number in [0..range).
   -> Integer -- ^ The range of the blinding parameter.
   -> a -- ^ The result of exponentiation or scalar multiplication.
-randomLadder gen (<+>) zero n blind range =
+randomLadder' gen (<+>) zero n blind range =
   climbLadder (makeLadder n blind range) gen (gen <+> gen) (<+>) dbl zero
   where dbl = \x -> x <+> x
+
+-- | For example, (randomLadder 3 (*) (^2) 1 17 8388608 16777216) = 129140163.
+-- The number 8388608 determines the sequence of squaring and cubing, but
+-- the final result, which is 3^17, does not depend on it.
+randomLadder :: a -- ^ The generator of the group, the point being multiplied or the base of exponentiation.
+  -> (a -> a -> a) -- ^ The group operation.
+  -> (a -> a) -- ^ The point doubling or number squaring operation.
+  -> a -- ^ The identity element.
+  -> Integer -- ^ The exponent or multiplier (must be nonnegative).
+  -> Integer -- ^ A blinding parameter, a random number in [0..range).
+  -> Integer -- ^ The range of the blinding parameter.
+  -> a -- ^ The result of exponentiation or scalar multiplication.
+randomLadder gen (<+>) dbl zero n blind range =
+  climbLadder (makeLadder n blind range) gen (gen <+> gen) (<+>) dbl zero
