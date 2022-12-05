@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           random-ladder
-version:        0.1.0.0
+version:        0.2.0.0
 synopsis:       random ladder for defeating side-channel attacks
 description:    Please see the README on GitHub at <https://github.com/phma/random-ladder#readme>
 category:       Cryptography
